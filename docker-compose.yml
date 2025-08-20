@@ -4,7 +4,7 @@ services:
     privileged: true # may not be necessary
     restart: unless-stopped
     stop_grace_period: 30s # alows for graceful service shutdown
-    image: ghcr.io/blakeblackshear/frigate:stable
+    image: ghcr.io/blakeblackshear/frigate:0.16.0
     shm_size: "512mb" # 4x as large as my old setup, should be good
     devices:
       - /dev/bus/usb:/dev/bus/usb # for the coarl tpu
