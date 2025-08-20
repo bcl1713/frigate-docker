@@ -1,0 +1,156 @@
+mqtt:
+  enabled: true
+  host: 192.168.86.3
+  user: frigate
+  password: frigate
+detectors:
+  coral:
+    type: edgetpu
+detect:
+  enabled: true
+objects:
+  track:
+    - person
+record:
+  enabled: true
+  retain:
+    days: 2
+    mode: all
+  alerts:
+    retain:
+      days: 30
+  detections:
+    retain:
+      days: 30
+snapshots:
+  enabled: true
+go2rtc:
+  streams:
+    living_room:
+      - rtsp://admin:9nZBXb7X@192.168.86.13:554/cam/realmonitor?channel=1&subtype=0
+    living_room_sub:
+      - rtsp://admin:9nZBXb7X@192.168.86.13:554/cam/realmonitor?channel=1&subtype=1
+    back_door:
+      - rtsp://admin:9nZBXb7X@192.168.86.10:554/cam/realmonitor?channel=1&subtype=0
+    back_door_sub:
+      - rtsp://admin:9nZBXb7X@192.168.86.10:554/cam/realmonitor?channel=1&subtype=1
+    front_drive:
+      - rtsp://admin:9nZBXb7X@192.168.86.11:554/cam/realmonitor?channel=1&subtype=0
+    front_drive_sub:
+      - rtsp://admin:9nZBXb7X@192.168.86.11:554/cam/realmonitor?channel=1&subtype=1
+    front_doorbell:
+      - rtsp://admin:9nZBXb7X@192.168.86.12:554/cam/realmonitor?channel=1&subtype=0#backchannel=0
+    front_doorbell_sub:
+      - rtsp://admin:9nZBXb7X@192.168.86.12:554/cam/realmonitor?channel=1&subtype=1#backchannel=0
+cameras:
+  living_room:
+    enabled: true
+    birdseye:
+      enabled: true
+      order: 0
+    ffmpeg:
+      output_args:
+        record: preset-record-generic-audio-aac
+      inputs:
+        - path: rtsp://127.0.0.1:8554/living_room_sub
+          input_args: preset-rtsp-restream
+          roles:
+            - detect
+        - path: rtsp://127.0.0.1:8554/living_room
+          input_args: preset-rtsp-restream
+          roles:
+            - record
+    motion:
+      mask: 1,0,1,0.094,0.654,0.087,0.655,0
+    objects:
+      track:
+        - person
+      filters:
+        person:
+          threshold: 0.80
+  back_door:
+    enabled: true
+    birdseye:
+      enabled: true
+      order: 1
+    ffmpeg:
+      output_args:
+        record: preset-record-generic-audio-aac
+      inputs:
+        - path: rtsp://127.0.0.1:8554/back_door_sub
+          input_args: preset-rtsp-restream
+          roles:
+            - detect
+        - path: rtsp://127.0.0.1:8554/back_door
+          input_args: preset-rtsp-restream
+          roles:
+            - record
+    motion:
+      mask: 1,0,1,0.094,0.723,0.094,0.726,0
+    objects:
+      track:
+        - person
+      filters:
+        person:
+          threshold: 0.75
+          mask:
+            - 704,0,673,92,534,42,337,36,213,56,207,0
+  front_drive:
+    enabled: true
+    birdseye:
+      enabled: true
+      order: 2
+    ffmpeg:
+      output_args:
+        record: preset-record-generic-audio-aac
+      inputs:
+        - path: rtsp://127.0.0.1:8554/front_drive_sub
+          input_args: preset-rtsp-restream
+          roles:
+            - detect
+        - path: rtsp://127.0.0.1:8554/front_drive
+          input_args: preset-rtsp-restream
+          roles:
+            - record
+    motion:
+      mask:
+        - 704,39,704,0,510,0,511,39
+    objects:
+      track:
+        - person
+        - bus
+      filters:
+        bus:
+          threshold: 0.75
+        person:
+          threshold: 0.75
+          mask:
+            - 252,72,478,47,704,97,704,0,0,0,0,155
+  front_doorbell:
+    enabled: true
+    birdseye:
+      enabled: true
+      order: 3
+    ffmpeg:
+      output_args:
+        record: preset-record-generic-audio-aac
+      inputs:
+        - path: rtsp://127.0.0.1:8554/front_doorbell_sub
+          input_args: preset-rtsp-restream
+          roles:
+            - detect
+        - path: rtsp://127.0.0.1:8554/front_doorbell
+          input_args: preset-rtsp-restream
+          roles:
+            - record
+    objects:
+      track:
+        - person
+      filters:
+        person:
+          mask: 
+            0.179,0.601,0.247,0.6,0.384,0.678,0.465,0.654,0.666,0.677,0.776,0.421,0.786,0.22,0.829,0,0.635,0,0.426,0.139,0.35,0.158,0.267,0.177,0.211,0.217,0.179,0.233,0.126,0.253,0.067,0.311,0.044,0.521
+    motion:
+      mask:
+        - 720,0,720,26,488,25,487,0
+version: 0.15-1
