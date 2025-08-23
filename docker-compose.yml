@@ -1,6 +1,22 @@
 services:
+  frigate-config-sync:
+    image: alpine/git
+    volumes:
+      - /mnt/TANK/docker/frigate/frigate-config:/frigate-config
+      - /mnt/TANK/docker/frigate/config:/config
+    working_dir: /frigate-config
+    command: >
+      sh -c "
+        echo 'Pulling latest config from Git...' &&
+        git pull &&
+        echo 'Copying config.yaml to frigate config directory...' &&
+        cp config.yaml /config/config.yaml &&
+        echo 'Config sync complete!'
+      "
   frigate:
     container_name: frigate
+    depends_on:
+      - frigate-config-sync
     privileged: true # may not be necessary
     restart: unless-stopped
     stop_grace_period: 30s # alows for graceful service shutdown
