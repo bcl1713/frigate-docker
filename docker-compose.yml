@@ -5,14 +5,14 @@ services:
       - /mnt/TANK/docker/frigate/frigate-config:/frigate-config
       - /mnt/TANK/docker/frigate/config:/config
     working_dir: /frigate-config
+    entrypoint: ["/bin/sh", "-c"]
     command: >
-      sh -c "
-        echo 'Pulling latest config from Git...' &&
-        git pull &&
-        echo 'Copying config.yaml to frigate config directory...' &&
-        cp config.yaml /config/config.yaml &&
-        echo 'Config sync complete!'
-      "
+      "echo 'Pulling latest config from Git...' &&
+       git pull &&
+       echo 'Copying config.yaml to frigate config directory...' &&
+       cp config.yaml /config/config.yaml &&
+       echo 'Config sync complete!'"
+
   frigate:
     container_name: frigate
     depends_on:
