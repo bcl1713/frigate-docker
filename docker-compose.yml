@@ -7,7 +7,8 @@ services:
     working_dir: /frigate-config
     entrypoint: ["/bin/sh", "-c"]
     command: >
-      "echo 'Pulling latest config from Git...' &&
+      "git config --global --add safe.directory /frigate-config &&
+       echo 'Pulling latest config from Git...' &&
        git pull &&
        echo 'Copying config.yaml to frigate config directory...' &&
        cp config.yaml /config/config.yaml &&
